@@ -42,13 +42,13 @@ export default function DashboardClient() {
 
     if (!data) return <div>Failed to load data</div>;
 
-    const monthlyData = Object.entries(data.monthlyStats).map(([key, val]) => ({
+    const monthlyData = Object.entries(data.monthlyStats || {}).map(([key, val]) => ({
         name: key,
         credit: val.credit,
         debit: val.debit,
     }));
 
-    const categoryData = Object.entries(data.categoryStats).map(([key, val]) => ({
+    const categoryData = Object.entries(data.categoryStats || {}).map(([key, val]) => ({
         name: key,
         value: val,
     }));
