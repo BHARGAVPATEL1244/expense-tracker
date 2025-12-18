@@ -65,7 +65,7 @@ export default function DashboardClient() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-3xl font-bold flex items-center">
-                            ₹{data.balance.toLocaleString()}
+                            ₹{(data.balance ?? 0).toLocaleString()}
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
                             Available across accounts
@@ -79,7 +79,7 @@ export default function DashboardClient() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-emerald-500">
-                            +₹{data.totalCredit.toLocaleString()}
+                            +₹{(data.totalCredit ?? 0).toLocaleString()}
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
                             Total received
@@ -93,7 +93,7 @@ export default function DashboardClient() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-rose-500">
-                            -₹{data.totalDebit.toLocaleString()}
+                            -₹{(data.totalDebit ?? 0).toLocaleString()}
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
                             Total spent
@@ -109,7 +109,7 @@ export default function DashboardClient() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-emerald-500">
-                            ₹{data.totalPendingFromProfiles.toLocaleString()}
+                            ₹{(data.totalPendingFromProfiles ?? 0).toLocaleString()}
                         </div>
                     </CardContent>
                 </Card>
@@ -119,7 +119,7 @@ export default function DashboardClient() {
                     </CardHeader>
                     <CardContent>
                         <div className="text-2xl font-bold text-rose-500">
-                            ₹{data.totalOweToProfiles.toLocaleString()}
+                            ₹{(data.totalOweToProfiles ?? 0).toLocaleString()}
                         </div>
                     </CardContent>
                 </Card>
