@@ -1,9 +1,9 @@
 import prisma from "@/lib/prisma";
 import { NextResponse } from "next/server";
 
-export async function GET(req: Request, { params }: { params: { id: string } }) {
+export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = params;
+        const { id } = await params;
         const transaction = await prisma.transaction.findUnique({
             where: { id },
         });
@@ -14,10 +14,10 @@ export async function GET(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function PUT(req: Request, { params }: { params: { id: string } }) {
+export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
         const body = await req.json();
-        const { id } = params;
+        const { id } = await params;
         const { amount, type, date, description, category, paymentSource, profileId } = body;
 
         const transaction = await prisma.transaction.update({
@@ -39,9 +39,9 @@ export async function PUT(req: Request, { params }: { params: { id: string } }) 
     }
 }
 
-export async function DELETE(req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
     try {
-        const { id } = params;
+        const { id } = await params;
         await prisma.transaction.delete({ where: { id } });
         return NextResponse.json({ success: true });
     } catch (error) {
