@@ -41,6 +41,7 @@ export default function DashboardClient() {
     }
 
     if (!data) return <div>Failed to load data</div>;
+    if ((data as any).error) return <div className="p-10 text-center text-destructive">Error: {(data as any).error}</div>;
 
     const monthlyData = Object.entries(data.monthlyStats || {}).map(([key, val]) => ({
         name: key,
