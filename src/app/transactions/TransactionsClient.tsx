@@ -20,15 +20,20 @@ interface Transaction {
 
 export default function TransactionsClient() {
     const [transactions, setTransactions] = useState<Transaction[]>([]);
+    const [profiles, setProfiles] = useState<{ id: string; name: string }[]>([]);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
+    const [typeFilter, setTypeFilter] = useState<'ALL' | 'CREDIT' | 'DEBIT'>('ALL');
+    const [profileFilter, setProfileFilter] = useState<string>('ALL');
+    const [showFilters, setShowFilters] = useState(false);
 
     useEffect(() => {
         fetchTransactions();
+        fetchProfiles();
     }, []);
 
     const fetchTransactions = () => {
-        fetch("/api/transactions") // Default fetches recent
+        fetch("/api/transactions")
             .then((res) => res.json())
             .then((data) => {
                 if (Array.isArray(data)) {
@@ -45,8 +50,17 @@ export default function TransactionsClient() {
             });
     };
 
+    const fetchProfiles = () => {
+        fetch("/api/profiles")
+            .then(res => res.json())
+            .then(data => {
+                if (Array.isArray(data)) setProfiles(data);
+            })
+            .catch(console.error);
+    }
+
     const handleDelete = async (id: string, e: React.MouseEvent) => {
-        e.stopPropagation(); // Prevent row click
+        e.stopPropagation();
         if (!confirm("Are you sure?")) return;
 
         try {
@@ -57,11 +71,17 @@ export default function TransactionsClient() {
         }
     }
 
-    const filtered = transactions.filter(t =>
-        t.description.toLowerCase().includes(search.toLowerCase()) ||
-        t.category?.toLowerCase().includes(search.toLowerCase()) ||
-        t.profile?.name.toLowerCase().includes(search.toLowerCase())
-    );
+    const filtered = transactions.filter(t => {
+        const matchesSearch =
+            t.description.toLowerCase().includes(search.toLowerCase()) ||
+            t.category?.toLowerCase().includes(search.toLowerCase()) ||
+            t.profile?.name.toLowerCase().includes(search.toLowerCase());
+
+        const matchesType = typeFilter === 'ALL' || t.type === typeFilter;
+        const matchesProfile = profileFilter === 'ALL' || (t.profile?.name === profileFilter); // Using name simplifies things as profile object might be partial
+
+        return matchesSearch && matchesType && matchesProfile;
+    });
 
     return (
         <div className="space-y-6 pb-20">
@@ -74,20 +94,51 @@ export default function TransactionsClient() {
                 </Button>
             </div>
 
-            <div className="flex items-center space-x-2">
-                <div className="relative flex-1">
-                    <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <input
-                        type="text"
-                        placeholder="Search transactions..."
-                        className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 pl-9 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
-                        value={search}
-                        onChange={(e) => setSearch(e.target.value)}
-                    />
+            <div className="flex flex-col space-y-4">
+                <div className="flex items-center space-x-2">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                        <input
+                            type="text"
+                            placeholder="Search transactions..."
+                            className="flex h-10 w-full rounded-md border border-input bg-transparent px-3 py-2 pl-9 text-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                    </div>
+                    <Button
+                        variant={showFilters ? "default" : "outline"}
+                        size="icon"
+                        onClick={() => setShowFilters(!showFilters)}
+                    >
+                        <Filter className="h-4 w-4" />
+                    </Button>
                 </div>
-                <Button variant="outline" size="icon">
-                    <Filter className="h-4 w-4" />
-                </Button>
+
+                {showFilters && (
+                    <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2 duration-200">
+                        <select
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            value={typeFilter}
+                            onChange={(e) => setTypeFilter(e.target.value as any)}
+                        >
+                            <option value="ALL">All Types</option>
+                            <option value="CREDIT">Income (Credit)</option>
+                            <option value="DEBIT">Expense (Debit)</option>
+                        </select>
+
+                        <select
+                            className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            value={profileFilter}
+                            onChange={(e) => setProfileFilter(e.target.value)}
+                        >
+                            <option value="ALL">All Profiles</option>
+                            {profiles.map(p => (
+                                <option key={p.id} value={p.name}>{p.name}</option>
+                            ))}
+                        </select>
+                    </div>
+                )}
             </div>
 
             <div className="space-y-4">
