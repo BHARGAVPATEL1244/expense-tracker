@@ -12,6 +12,8 @@ interface Profile {
     name: string;
     note?: string;
     netBalance: number;
+    spentForThem: number;
+    receivedFromThem: number;
 }
 
 export default function ProfilesPage() {
@@ -48,30 +50,46 @@ export default function ProfilesPage() {
                     </div>
                 ) : (
                     profiles.map((p) => (
-                        <Card key={p.id} className="hover:border-primary/50 transition-colors">
-                            <CardContent className="p-6 flex items-center justify-between">
-                                <div className="flex items-center space-x-4">
-                                    <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
-                                        <User className="h-5 w-5 text-muted-foreground" />
+                        <Link key={p.id} href={`/profiles/${p.id}`}>
+                            <Card className="hover:border-primary/50 transition-colors cursor-pointer h-full">
+                                <CardContent className="p-6">
+                                    <div className="flex items-center space-x-4 mb-4">
+                                        <div className="h-10 w-10 rounded-full bg-secondary flex items-center justify-center">
+                                            <User className="h-5 w-5 text-muted-foreground" />
+                                        </div>
+                                        <div>
+                                            <div className="font-semibold">{p.name}</div>
+                                            {p.note && <div className="text-xs text-muted-foreground">{p.note}</div>}
+                                        </div>
                                     </div>
-                                    <div>
-                                        <div className="font-semibold">{p.name}</div>
-                                        {p.note && <div className="text-xs text-muted-foreground">{p.note}</div>}
+
+                                    <div className="space-y-2 text-sm">
+                                        <div className="flex justify-between text-muted-foreground">
+                                            <span>Spent for them (You give):</span>
+                                            <span className="text-rose-500 font-medium">₹{(p.spentForThem || 0).toLocaleString()}</span>
+                                        </div>
+                                        <div className="flex justify-between text-muted-foreground">
+                                            <span>Received from them (You get):</span>
+                                            <span className="text-emerald-500 font-medium">₹{(p.receivedFromThem || 0).toLocaleString()}</span>
+                                        </div>
+                                        <div className="pt-2 mt-2 border-t flex justify-between items-center">
+                                            <span className="font-medium">Net Balance:</span>
+                                            <div className="text-right">
+                                                <div className="text-[10px] text-muted-foreground uppercase text-right">
+                                                    {p.netBalance > 0 ? "Owes you" : p.netBalance < 0 ? "You owe" : "Settled"}
+                                                </div>
+                                                <div className={cn(
+                                                    "font-bold text-lg",
+                                                    p.netBalance > 0 ? "text-emerald-500" : p.netBalance < 0 ? "text-rose-500" : "text-muted-foreground"
+                                                )}>
+                                                    ₹{Math.abs(p.netBalance).toLocaleString()}
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
-                                </div>
-                                <div className="text-right">
-                                    <div className="text-xs text-muted-foreground">
-                                        {p.netBalance > 0 ? "Owes you" : p.netBalance < 0 ? "You owe" : "Settled"}
-                                    </div>
-                                    <div className={cn(
-                                        "font-bold text-lg",
-                                        p.netBalance > 0 ? "text-emerald-500" : p.netBalance < 0 ? "text-rose-500" : "text-muted-foreground"
-                                    )}>
-                                        ₹{Math.abs(p.netBalance).toLocaleString()}
-                                    </div>
-                                </div>
-                            </CardContent>
-                        </Card>
+                                </CardContent>
+                            </Card>
+                        </Link>
                     ))
                 )}
             </div>
