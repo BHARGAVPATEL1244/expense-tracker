@@ -31,7 +31,16 @@ export default function TransactionsClient() {
         fetch("/api/transactions") // Default fetches recent
             .then((res) => res.json())
             .then((data) => {
-                setTransactions(data);
+                if (Array.isArray(data)) {
+                    setTransactions(data);
+                } else {
+                    console.error("Failed to load transactions:", data);
+                    setTransactions([]);
+                }
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error(err);
                 setLoading(false);
             });
     };
