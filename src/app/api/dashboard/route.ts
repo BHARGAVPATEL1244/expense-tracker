@@ -55,7 +55,7 @@ export async function GET() {
             categoryStats
         });
     } catch (error) {
-        console.error(error);
-        return NextResponse.json({ error: "Failed to fetch dashboard data" }, { status: 500 });
+        console.error("Dashboard API Error:", error);
+        return NextResponse.json({ error: "Failed to fetch dashboard data", details: String(error) }, { status: 500 });
     }
 }
