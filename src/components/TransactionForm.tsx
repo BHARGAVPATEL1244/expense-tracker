@@ -115,6 +115,10 @@ export function TransactionForm({ initialData, onSubmit, submitLabel }: Transact
                                 required
                                 value={date}
                                 onChange={(e) => setDate(e.target.value)}
+                                className="block w-full appearance-none bg-background text-base" // text-base ensures 16px on mobile to prevent zoom
+                                style={{
+                                    WebkitAppearance: "none", // Fix iOS styling
+                                }}
                             />
                         </div>
 

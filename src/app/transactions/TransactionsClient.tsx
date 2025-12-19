@@ -171,7 +171,7 @@ export default function TransactionsClient() {
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity"
+                                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity"
                                         asChild
                                     >
                                         <Link href={`/transactions/edit/${t.id}`}>
@@ -181,7 +181,7 @@ export default function TransactionsClient() {
                                     <Button
                                         variant="ghost"
                                         size="icon"
-                                        className="opacity-0 group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
+                                        className="opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity text-destructive hover:text-destructive"
                                         onClick={(e) => handleDelete(t.id, e)}
                                     >
                                         <Trash2 className="h-4 w-4" />
