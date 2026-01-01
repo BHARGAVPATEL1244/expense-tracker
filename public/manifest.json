@@ -1,0 +1,17 @@
+{
+  "name": "BET Expense Tracker",
+  "short_name": "BET",
+  "description": "Track your personal finances and debts with ease.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#09090b",
+  "theme_color": "#09090b",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

@@ -9,6 +9,14 @@ const inter = Inter({ subsets: ["latin"] });
 export const metadata: Metadata = {
     title: "Expense Tracker",
     description: "Track your personal finances and debts",
+    manifest: "/manifest.json",
+    viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
+    themeColor: "#09090b",
+    appleWebApp: {
+        capable: true,
+        statusBarStyle: "default",
+        title: "BET",
+    },
 };
 
 export default function RootLayout({
