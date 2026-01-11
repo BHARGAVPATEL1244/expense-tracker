@@ -13,18 +13,26 @@ export async function GET() {
         const categoryStats: Record<string, number> = {};
 
         transactions.forEach(t => {
-            if (t.type === 'CREDIT') totalCredit += t.amount;
-            else if (t.type === 'DEBIT') totalDebit += t.amount;
+            try {
+                if (t.type === 'CREDIT') totalCredit += t.amount;
+                else if (t.type === 'DEBIT') totalDebit += t.amount;
 
-            // Monthly
-            const month = new Date(t.date).toLocaleString('default', { month: 'short', year: 'numeric' });
-            if (!monthlyStats[month]) monthlyStats[month] = { credit: 0, debit: 0 };
-            if (t.type === 'CREDIT') monthlyStats[month].credit += t.amount;
-            else monthlyStats[month].debit += t.amount;
+                // Monthly
+                // Safe date check
+                const dateObj = new Date(t.date);
+                if (!isNaN(dateObj.getTime())) {
+                    const month = dateObj.toLocaleString('default', { month: 'short', year: 'numeric' });
+                    if (!monthlyStats[month]) monthlyStats[month] = { credit: 0, debit: 0 };
+                    if (t.type === 'CREDIT') monthlyStats[month].credit += t.amount;
+                    else monthlyStats[month].debit += t.amount;
+                }
 
-            // Category (only debits usually? or both? Let's track debit expenses by category)
-            if (t.type === 'DEBIT' && t.category) {
-                categoryStats[t.category] = (categoryStats[t.category] || 0) + t.amount;
+                // Category
+                if (t.type === 'DEBIT' && t.category) {
+                    categoryStats[t.category] = (categoryStats[t.category] || 0) + t.amount;
+                }
+            } catch (e) {
+                console.warn("Skipping malformed transaction:", t.id, e);
             }
         });
 
@@ -34,15 +42,19 @@ export async function GET() {
         let totalOweToProfiles = 0;
 
         profiles.forEach(p => {
-            let spent = 0;
-            let received = 0;
-            p.transactions.forEach(t => {
-                if (t.type === 'DEBIT') spent += t.amount;
-                else if (t.type === 'CREDIT') received += t.amount;
-            });
-            const net = spent - received;
-            if (net > 0) totalPendingFromProfiles += net;
-            else totalOweToProfiles += Math.abs(net);
+            try {
+                let spent = 0;
+                let received = 0;
+                p.transactions.forEach(t => {
+                    if (t.type === 'DEBIT') spent += t.amount;
+                    else if (t.type === 'CREDIT') received += t.amount;
+                });
+                const net = spent - received;
+                if (net > 0) totalPendingFromProfiles += net;
+                else totalOweToProfiles += Math.abs(net);
+            } catch (e) {
+                console.warn("Skipping malformed profile:", p.id, e);
+            }
         });
 
         return NextResponse.json({
