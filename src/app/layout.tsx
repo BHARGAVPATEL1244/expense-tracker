@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Navigation } from "@/components/Navigation";
@@ -10,13 +10,19 @@ export const metadata: Metadata = {
     title: "Expense Tracker",
     description: "Track your personal finances and debts",
     manifest: "/manifest.json",
-    viewport: "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=0",
-    themeColor: "#09090b",
     appleWebApp: {
         capable: true,
         statusBarStyle: "default",
         title: "BET",
     },
+};
+
+export const viewport: Viewport = {
+    width: "device-width",
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    themeColor: "#09090b",
 };
 
 export default function RootLayout({
