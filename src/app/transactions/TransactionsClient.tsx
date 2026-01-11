@@ -39,13 +39,19 @@ export default function TransactionsClient() {
                 if (Array.isArray(data)) {
                     setTransactions(data);
                 } else {
-                    console.error("Failed to load transactions:", data);
+                    console.error("Transactions API returned non-array:", data);
+                    // If error object
+                    if ((data as any).error) {
+                        // Ideally show error to user, but for now just don't crash the map
+                        console.error((data as any).error);
+                    }
                     setTransactions([]);
                 }
                 setLoading(false);
             })
-            .catch(err => {
+            .catch((err) => {
                 console.error(err);
+                setTransactions([]);
                 setLoading(false);
             });
     };
