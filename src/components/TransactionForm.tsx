@@ -41,7 +41,14 @@ export function TransactionForm({ initialData, onSubmit, submitLabel }: Transact
     useEffect(() => {
         fetch("/api/profiles")
             .then((res) => res.json())
-            .then((data) => setProfiles(data));
+            .then((data) => {
+                if (Array.isArray(data)) {
+                    setProfiles(data);
+                } else {
+                    console.error("Profiles API error in Form:", data);
+                    setProfiles([]);
+                }
+            });
     }, []);
 
     const handleSubmit = async (e: React.FormEvent) => {
